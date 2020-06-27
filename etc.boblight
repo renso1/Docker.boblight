@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# INIT INFO
+# Provides:          boblightd
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: boblightd daemon
+# Description:       Boblight daemon
+### END INIT INFO
+
+PATH=/usr/local/bin:/bin:/usr/bin
+NAME=boblightd
+DAEMON=/usr/bin/$NAME
+PIDFILE=/var/run/$NAME.pid
+DESC="boblight daemon"
+USER=boblightd
+
+[ -x "$DAEMON" ] || exit 0
+
+. /lib/lsb/init-functions
+
+case "$1" in
+  start)
+    # master switch
+      log_daemon_msg "Starting $DESC" "$NAME"
+      /sbin/start-stop-daemon --start --exec $DAEMON --background --make-pidfile --pidfile $PIDFILE --chuid $USER
+      log_end_msg $?
+    ;;
+  stop)
+ # master switch
+      log_daemon_msg "Stopping $DESC" "$NAME"
+      /sbin/start-stop-daemon --stop --pidfile $PIDFILE --chuid $USER
+      /bin/rm -f $PIDFILE
+      log_end_msg $?
+    ;;
+  reload|restart)
+    $0 stop && $0 start
+    ;;
+  status)
+ status_of_proc -p $PIDFILE $DAEMON $NAME && exit 0 || exit $?
+    ;;
+  *)
+    echo "Usage: /etc/init.d/$NAME {start|stop|restart|status}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

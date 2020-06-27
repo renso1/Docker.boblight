@@ -1,0 +1,12 @@
+version: '2'
+services:
+    boblight:
+        restart: always
+        container_name: boblightd
+        build: .
+        ports:
+            - 7999:19333/tcp
+        volumes:
+            - "/dev/ttyACM0:/dev/ttyACM0"
+        privileged: true
+
